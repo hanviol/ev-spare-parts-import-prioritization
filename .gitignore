@@ -1,0 +1,6 @@
+# Local Python environment
+.venv/
+__pycache__/
+
+# Raw data is published as GitHub Release assets, not committed to the repo
+data/
