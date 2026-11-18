@@ -1,6 +1,7 @@
 """Jiji Ethiopia: JSON listing endpoint, one run per search in settings."""
 
 import json
+import re
 
 import helpers
 import settings
@@ -38,20 +39,20 @@ def advert_to_row(advert):
     }
 
 
-def scrape_search(label, extra_params, max_pages):
+def scrape_search(label, extra_params, max_pages, slug="cars", source=SOURCE):
     rows = []
     page = 1
 
     while True:
-        params = {"slug": "cars", "page": page}
+        params = {"slug": slug, "page": page}
         params.update(extra_params)
 
-        response = helpers.fetch(settings.JIJI_API, params=params, source=SOURCE, note=label)
+        response = helpers.fetch(settings.JIJI_API, params=params, source=source, note=label)
         if response is None:
             break
 
-        safe_label = label.replace(" ", "_").replace(":", "").replace("=", "-").replace(".", "")
-        helpers.save_snapshot(SOURCE, f"{safe_label}_page-{page:03d}", response.text, "json")
+        safe_label = re.sub(r"\W+", "_", label).strip("_")
+        helpers.save_snapshot(source, f"{safe_label}_page-{page:03d}", response.text, "json")
 
         data = json.loads(response.text)
         adverts = helpers.dig(data, "adverts_list", "adverts") or []
@@ -65,7 +66,7 @@ def scrape_search(label, extra_params, max_pages):
             row["collected_at_utc"] = helpers.now_utc()
             rows.append(row)
 
-        print(f"  jiji  {label:<28} page {page}  ({len(adverts)} ads, {total} reported)")
+        print(f"  {source}  {label:<28} page {page}  ({len(adverts)} ads, {total} reported)")
 
         if not adverts or not data.get("next_url"):
             break
@@ -80,4 +81,13 @@ def scrape(max_pages=None):
     all_rows = []
     for label, extra_params in settings.JIJI_SEARCHES.items():
         all_rows.extend(scrape_search(label, extra_params, max_pages))
+    return all_rows
+
+
+def scrape_parts(max_pages=None):
+    """Car-parts section: one run per search in settings.JIJI_PARTS_SEARCHES."""
+    all_rows = []
+    for label, query in settings.JIJI_PARTS_SEARCHES.items():
+        all_rows.extend(scrape_search(label, {"query": query}, max_pages,
+                                      slug="car-parts-and-accessories", source="jiji_parts"))
     return all_rows
