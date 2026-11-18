@@ -38,7 +38,11 @@ Files are raw: nothing is cleaned, merged or de-duplicated. All cleaning happens
 | `listings_afromekina.csv` | AfroMekina electric listings |
 | `listings_gezat.csv` | Gezat electric listings |
 
-### Parts evidence (`raw-parts-<date>`)
+### Parts evidence (`raw-parts-2026-11-18`)
+
+Part categories: brake pads, brake discs, 12V battery, tyres, headlights, tail lights, side mirrors, bumpers,
+fenders, shock absorbers. Tyres and the 12V battery replace wiper blades and cabin-air filters, which had almost
+no evidence.
 
 | File | Contents |
 |---|---|
