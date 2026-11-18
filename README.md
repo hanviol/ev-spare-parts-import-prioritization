@@ -57,15 +57,6 @@ Files are raw: nothing is cleaned, merged or de-duplicated. All cleaning happens
 
 The JSON endpoints are the ones each site's own pages call. They are undocumented and may change.
 
-## Ethics and privacy
-
-- robots.txt is checked before every request; 1.5 s delay between requests; honest User-Agent.
-- Seller names, phone numbers, emails and free-text descriptions returned by the
-  Mekina and AfroMekina endpoints are not saved.
-- Phone numbers and email addresses are removed from every saved field and snapshot,
-  because the raw data is published.
-- Internal seller account IDs are kept only to count unique sellers.
-
 ## Running the collectors
 
 ```bash
